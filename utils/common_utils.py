@@ -12,7 +12,7 @@ def config_read():
     return baseurl
 
 
-burl= config_read()[0]
+burl= config_read()
 
 
 """
