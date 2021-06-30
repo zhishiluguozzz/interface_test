@@ -38,7 +38,7 @@ def r_post(api, param=None, header=None, cookie=None):
     return res.status_code, res.json()
 
 
-def testfile_read(file_dir):
+def file_read(file_dir):
     file_list = os.listdir(file_dir)
     return file_list
 
@@ -79,7 +79,7 @@ def find_replace(ph,rd):
 
 
 def create_testcase():
-    lis = testfile_read('./testdata')
+    lis = file_read('./testdata')
     for i in lis:
         with open("./testdata/"+i, 'r') as f:
             load_data = json.load(f)
