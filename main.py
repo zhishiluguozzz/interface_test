@@ -6,7 +6,7 @@ if __name__ == '__main__':
         os.mkdir("./testcase")
     with open('./testcase/__init__.py' ,'w') as f:
         print("")
-    f.close
+    f.close()
     create_testcase()
     result = os.popen("pytest -v -s --alluredir=report/xml ./testcase")
     print(result.read())
