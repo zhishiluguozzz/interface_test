@@ -12,7 +12,7 @@ def config_read():
     return baseurl
 
 
-burl= config_read()
+burl = config_read()
 
 
 """
@@ -28,12 +28,12 @@ GetToken方法需要根据当前项目适配
 #     return res.json()["token"]
 
 
-def r_get(api, param=None, header=None, cookie=None):
+def r_get(api, param, header=None, cookie=None):
     res = requests.get(url=burl+api, params=param, headers=header, cookies=cookie)
     return res.status_code, res.json()
 
 
-def r_post(api, param=None, header=None, cookie=None):
+def r_post(api, param, header=None, cookie=None):
     res = requests.post(url=burl+api, json=param, headers=header, cookies=cookie)
     return res.status_code, res.json()
 
@@ -61,16 +61,16 @@ def dynamic_make_testcase(api, data, method, expect, headers):
             print("\n", file=f)
 
 
-def find_replace(ph,rd):
-    if isinstance(ph,dict):
+def find_replace(ph, rd):
+    if isinstance(ph, dict):
         for i in ph.keys():
             for j in rd:
                 if ph[i] == ("$~"+j):
                     ph[i] = rd[j]
         return ph
-    elif isinstance(ph,list):
+    elif isinstance(ph, list):
         le = len(ph)
-        for i in range(0,le):
+        for i in range(0, le):
             for j in ph[i]:
                 for k in rd:
                     if ph[i][j] == ("$~"+k):
@@ -83,26 +83,25 @@ def create_testcase():
     for i in lis:
         with open("./testdata/"+i, 'r') as f:
             load_data = json.load(f)
-            le = len(load_data)
-            for i in range(1, le):
-                if "step" + str(i) in load_data:
-                    apiname = load_data["step" + str(i)]["apiname"]
-                    method = load_data["step" + str(i)]["method"]
-                    headers = load_data["step" + str(i)]["headers"]
-                    testdata = load_data["step" + str(i)]["testdata"]
-                    #replace_data = load_data["step" + str(i)]["return_data"]
-                    if method == "get":
-                        return_d = r_get(apiname, testdata, headers)
-                    elif method == "post":
-                        return_d = r_post(apiname, testdata, headers)
             apiname = load_data["case"]["apiname"]
             headers = load_data["case"]["headers"]
-            headers = find_replace(headers, return_d[1])
             testdata = load_data["case"]["testdata"]
-            testdata = find_replace(testdata, return_d[1])
             method = load_data["case"]["method"]
             expect_result = load_data["case"]["expect_code"]
+            le = len(load_data)
+            if le > 1:
+                for j in range(1, le):
+                    if "step" + str(j) in load_data:
+                        apiname1 = load_data["step" + str(j)]["apiname"]
+                        method1 = load_data["step" + str(j)]["method"]
+                        headers1 = load_data["step" + str(j)]["headers"]
+                        testdata1 = load_data["step" + str(j)]["testdata"]
+                        # replace_data = load_data["step" + str(i)]["return_data"]
+                        if method1 == "get":
+                            return_d = r_get(apiname1, testdata1, headers1)
+                        elif method1 == "post":
+                            return_d = r_post(apiname1, testdata1, headers1)
+                        headers = find_replace(headers, return_d[1])
+                        testdata = find_replace(testdata, return_d[1])
         f.close()
-        dynamic_make_testcase(apiname, testdata, method ,expect_result, headers)
-
-
+        dynamic_make_testcase(apiname, testdata, method, expect_result, headers)
