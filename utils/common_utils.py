@@ -28,13 +28,13 @@ GetToken方法需要根据当前项目适配
 #     return res.json()["token"]
 
 
-def r_get(api, param, header):
-    res = requests.get(url=burl+api, params=param, headers=header)
+def r_get(api, param=None, header=None, cookie=None):
+    res = requests.get(url=burl+api, params=param, headers=header, cookies=cookie)
     return res.status_code, res.json()
 
 
-def r_post(api, param, header):
-    res = requests.post(url=burl+api, json=param, headers=header)
+def r_post(api, param=None, header=None, cookie=None):
+    res = requests.post(url=burl+api, json=param, headers=header, cookies=cookie)
     return res.status_code, res.json()
 
 
